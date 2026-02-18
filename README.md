@@ -3,6 +3,13 @@
 
 An experimental project to attempt to create an AI that can play the 3rd generation Pokemon games (specifically Pokemon Emerald - it's very close to my heart).
 
+## Quick Start (Current)
+
+For the maintained, step-by-step run instructions (environment setup, emulator/ROM setup, and GUI launch), see:
+
+- [RUN_GUI.md](RUN_GUI.md)
+- [RUN_GUI_MAC.md](RUN_GUI_MAC.md)
+
 <p align = "center">
     <img src="readme_src/poke_ai_main_demo.gif" alt="poke.AI demo">
 </p>
