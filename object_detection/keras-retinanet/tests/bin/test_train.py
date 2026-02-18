@@ -14,12 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import keras_retinanet.bin.train
-from tensorflow import keras
-
+import os
 import warnings
 
 import pytest
+from tensorflow import keras
+
+import keras_retinanet.bin.train
+
+TEST_DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'test-data'))
 
 
 @pytest.fixture(autouse=True)
@@ -31,6 +34,11 @@ def clear_session():
 
 
 def test_coco():
+    try:
+        import pycocotools  # noqa: F401
+    except Exception:
+        pytest.skip('pycocotools is not installed')
+
     # ignore warnings in this test
     warnings.simplefilter('ignore')
 
@@ -41,7 +49,7 @@ def test_coco():
         '--no-weights',
         '--no-snapshots',
         'coco',
-        'tests/test-data/coco',
+        os.path.join(TEST_DATA_DIR, 'coco'),
     ])
 
 
@@ -56,7 +64,7 @@ def test_pascal():
         '--no-weights',
         '--no-snapshots',
         'pascal',
-        'tests/test-data/pascal',
+        os.path.join(TEST_DATA_DIR, 'pascal'),
     ])
 
 
@@ -71,12 +79,17 @@ def test_csv():
         '--no-weights',
         '--no-snapshots',
         'csv',
-        'tests/test-data/csv/annotations.csv',
-        'tests/test-data/csv/classes.csv',
+        os.path.join(TEST_DATA_DIR, 'csv', 'annotations.csv'),
+        os.path.join(TEST_DATA_DIR, 'csv', 'classes.csv'),
     ])
 
 
 def test_vgg():
+    try:
+        import pycocotools  # noqa: F401
+    except Exception:
+        pytest.skip('pycocotools is not installed')
+
     # ignore warnings in this test
     warnings.simplefilter('ignore')
 
@@ -89,5 +102,5 @@ def test_vgg():
         '--no-snapshots',
         '--freeze-backbone',
         'coco',
-        'tests/test-data/coco',
+        os.path.join(TEST_DATA_DIR, 'coco'),
     ])

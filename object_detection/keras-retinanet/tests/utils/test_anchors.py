@@ -1,13 +1,18 @@
-import numpy as np
 import configparser
+import os
+
+import numpy as np
 from tensorflow import keras
 
 from keras_retinanet.utils.anchors import anchors_for_shape, AnchorParameters
 from keras_retinanet.utils.config import read_config_file, parse_anchor_parameters
 
 
+TEST_DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'test-data'))
+
+
 def test_config_read():
-    config = read_config_file('tests/test-data/config/config.ini')
+    config = read_config_file(os.path.join(TEST_DATA_DIR, 'config', 'config.ini'))
     assert 'anchor_parameters' in config
     assert 'sizes' in config['anchor_parameters']
     assert 'strides' in config['anchor_parameters']
