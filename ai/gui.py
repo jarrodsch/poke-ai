@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 import threading
 
-from standalone_backend import poke_ai
+from .standalone_backend import poke_ai
 
 """
 Stuff to add to GUI. 

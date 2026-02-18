@@ -19,10 +19,10 @@ import time
 import sys
 
 # Custom imports
-from mapper import live_map
-from auto_controller import backend_controller as controller
-from battle_ai.battle_ai import battle_ai
-from ai.tf_config import configure_tensorflow
+from .mapper import live_map
+from .auto_controller import backend_controller as controller
+from .battle_ai.battle_ai import battle_ai
+from .tf_config import configure_tensorflow
 
 import threading
 
