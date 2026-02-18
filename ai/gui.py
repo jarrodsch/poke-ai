@@ -299,7 +299,8 @@ class gui:
         self.map_num += 1
     
     def open_pretrained_battle_ai_model(self):
-        model_path = filedialog.askopenfilename(initialdir="D:/App Development/pokemon_ai/ai/battle_ai/models/", \
+        models_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "battle_ai", "models"))
+        model_path = filedialog.askopenfilename(initialdir=models_dir, \
             title="Select model to load", filetypes=(("Saved model files", "*.h5"),))
         print(model_path)
         if (model_path == ""):

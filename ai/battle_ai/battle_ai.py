@@ -5,6 +5,7 @@ from mss import mss
 import pyautogui as pag
 from PIL import Image
 import time
+from pathlib import Path
 
 # Shift + F1 saves state
 # F1 Loads the same state
@@ -12,12 +13,19 @@ import time
 
 class battle_ai:
     def __init__(self, battle_model):
+        self.base_dir = Path(__file__).resolve().parent
         self.states = ["entered_battle", "intro_anim", "action_select", "ongoing_turn", "win", "lose"]
         self.cur_state = "entered_battle"
 
-        self.z_press_img = cv2.imread("battle_ai/z_press.png")
+        z_press_path = self.base_dir / "z_press.png"
+        action_select_path = self.base_dir / "action_select.png"
+        self.z_press_img = cv2.imread(str(z_press_path))
+        self.action_select_img = cv2.imread(str(action_select_path))
+        if self.z_press_img is None or self.action_select_img is None:
+            raise FileNotFoundError(
+                f"Battle AI template images not found. Expected: {z_press_path} and {action_select_path}"
+            )
         self.z_press_img = Image.fromarray(self.z_press_img)
-        self.action_select_img = cv2.imread("battle_ai/action_select.png")
         self.action_select_img = Image.fromarray(self.action_select_img)
 
         self.pokemon_hp = 141
@@ -304,7 +312,8 @@ class battle_ai:
                 if (self.num_episodes_completed % 5 == 0 and self.continue_training == True):
                     print("Model saved!")
                     print("")
-                    self.battle_model.save_weights(f"battle_ai/models/battle_model_{self.num_episodes_completed}.h5")
+                    model_path = self.base_dir / "models" / f"battle_model_{self.num_episodes_completed}.h5"
+                    self.battle_model.save_weights(str(model_path))
 
             # This conditional basically allows the battle_model to perform its training after every state
             # pair provided that the minimum batch_size in battle_data has been achieved.
