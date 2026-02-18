@@ -100,6 +100,7 @@ def translation(translation):
     # Returns
         the translation matrix as 3 by 3 numpy array
     """
+    translation = np.array(translation).reshape(-1)
     return np.array([
         [1, 0, translation[0]],
         [0, 1, translation[1]],
@@ -152,6 +153,7 @@ def scaling(factor):
     Returns
         the zoom matrix as 3 by 3 numpy array
     """
+    factor = np.array(factor).reshape(-1)
     return np.array([
         [factor[0], 0, 0],
         [0, factor[1], 0],

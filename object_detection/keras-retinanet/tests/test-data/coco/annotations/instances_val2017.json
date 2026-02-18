@@ -1,0 +1,1 @@
+{"images": [{"id": 2, "width": 10, "height": 10, "file_name": "000000000002.jpg"}], "annotations": [{"id": 2, "image_id": 2, "category_id": 1, "bbox": [2, 2, 4, 4], "area": 16, "iscrowd": 0}], "categories": [{"id": 1, "name": "object", "supercategory": "object"}]}

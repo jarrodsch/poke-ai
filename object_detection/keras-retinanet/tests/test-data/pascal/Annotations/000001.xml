@@ -1,0 +1,21 @@
+<annotation>
+    <folder>VOC2012</folder>
+    <filename>000001.jpg</filename>
+    <size>
+        <width>10</width>
+        <height>10</height>
+        <depth>3</depth>
+    </size>
+    <object>
+        <name>person</name>
+        <pose>Unspecified</pose>
+        <truncated>0</truncated>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>2</xmin>
+            <ymin>2</ymin>
+            <xmax>6</xmax>
+            <ymax>6</ymax>
+        </bndbox>
+    </object>
+</annotation>

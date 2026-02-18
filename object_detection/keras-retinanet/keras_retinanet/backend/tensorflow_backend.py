@@ -65,7 +65,12 @@ def resize_images(images, size, method='bilinear', align_corners=False):
         'bicubic' : tensorflow.image.ResizeMethod.BICUBIC,
         'area'    : tensorflow.image.ResizeMethod.AREA,
     }
-    return tensorflow.image.resize_images(images, size, methods[method], align_corners)
+    if hasattr(tensorflow.image, 'resize_images'):
+        return tensorflow.image.resize_images(images, size, methods[method], align_corners)
+    try:
+        return tensorflow.image.resize(images, size, method=methods[method], align_corners=align_corners)
+    except TypeError:
+        return tensorflow.image.resize(images, size, method=methods[method])
 
 
 def non_max_suppression(*args, **kwargs):
