@@ -1,9 +1,9 @@
-import keras_retinanet.losses
+import numpy as np
+import pytest
 from tensorflow import keras
 
-import numpy as np
-
-import pytest
+import keras_retinanet.losses
+from keras_retinanet.utils.keras import keras_floatx
 
 
 def test_smooth_l1():
@@ -14,7 +14,7 @@ def test_smooth_l1():
             [0, 0, 0, 0],
             [0, 0, 0, 0],
         ]
-    ], dtype=keras.backend.floatx())
+    ], dtype=keras_floatx())
     regression = keras.backend.variable(regression)
 
     regression_target = np.array([
@@ -24,7 +24,7 @@ def test_smooth_l1():
             [0, 0, 0.05, 0, 1],
             [0, 0, 1, 0, 0],
         ]
-    ], dtype=keras.backend.floatx())
+    ], dtype=keras_floatx())
     regression_target = keras.backend.variable(regression_target)
 
     loss = keras_retinanet.losses.smooth_l1()(regression_target, regression)

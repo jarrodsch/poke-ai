@@ -33,6 +33,7 @@ from ..utils.image import (
     preprocess_image,
     resize_image,
 )
+from ..utils.keras import keras_floatx
 from ..utils.transform import transform_aabb
 
 
@@ -262,7 +263,7 @@ class Generator(keras.utils.Sequence):
         max_shape = tuple(max(image.shape[x] for image in image_group) for x in range(3))
 
         # construct an image batch object
-        image_batch = np.zeros((self.batch_size,) + max_shape, dtype=keras.backend.floatx())
+        image_batch = np.zeros((self.batch_size,) + max_shape, dtype=keras_floatx())
 
         # copy all images to the upper left part of the image batch object
         for image_index, image in enumerate(image_group):

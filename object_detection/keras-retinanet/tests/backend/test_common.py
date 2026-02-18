@@ -16,7 +16,9 @@ limitations under the License.
 
 import numpy as np
 from tensorflow import keras
+
 import keras_retinanet.backend
+from keras_retinanet.utils.keras import keras_floatx
 
 
 def test_bbox_transform_inv():
@@ -71,7 +73,7 @@ def test_shift():
         [-12, -12, 12, 12],
         [-12, -16, 12, 16],
         [-16, -12, 16, 12]
-    ], dtype=keras.backend.floatx())
+    ], dtype=keras_floatx())
 
     expected = [
         # anchors for (0, 0)

@@ -15,8 +15,11 @@ limitations under the License.
 """
 
 import numpy as np
-from tensorflow import keras
 import sys
+
+from tensorflow import keras
+
+from .keras import keras_floatx
 if not(sys.platform == 'win32'):
     from ..utils.compute_overlap import compute_overlap
 
@@ -46,8 +49,8 @@ The default anchor parameters.
 AnchorParameters.default = AnchorParameters(
     sizes   = [32, 64, 128, 256, 512],
     strides = [8, 16, 32, 64, 128],
-    ratios  = np.array([0.5, 1, 2], keras.backend.floatx()),
-    scales  = np.array([2 ** 0, 2 ** (1.0 / 3.0), 2 ** (2.0 / 3.0)], keras.backend.floatx()),
+    ratios  = np.array([0.5, 1, 2], keras_floatx()),
+    scales  = np.array([2 ** 0, 2 ** (1.0 / 3.0), 2 ** (2.0 / 3.0)], keras_floatx()),
 )
 
 def compute_overlap_windows(a, b):
@@ -111,8 +114,8 @@ def anchor_targets_bbox(
 
     batch_size = len(image_group)
 
-    regression_batch  = np.zeros((batch_size, anchors.shape[0], 4 + 1), dtype=keras.backend.floatx())
-    labels_batch      = np.zeros((batch_size, anchors.shape[0], num_classes + 1), dtype=keras.backend.floatx())
+    regression_batch  = np.zeros((batch_size, anchors.shape[0], 4 + 1), dtype=keras_floatx())
+    labels_batch      = np.zeros((batch_size, anchors.shape[0], num_classes + 1), dtype=keras_floatx())
 
     # compute labels and regression targets
     for index, (image, annotations) in enumerate(zip(image_group, annotations_group)):

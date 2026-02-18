@@ -14,10 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from tensorflow import keras
-import keras_retinanet.layers
-
 import numpy as np
+from tensorflow import keras
+
+import keras_retinanet.layers
+from keras_retinanet.utils.keras import keras_floatx
 
 
 class TestFilterDetections(object):
@@ -29,13 +30,13 @@ class TestFilterDetections(object):
         boxes = np.array([[
             [0, 0, 10, 10],
             [0, 0, 10, 10],  # this will be suppressed
-        ]], dtype=keras.backend.floatx())
+        ]], dtype=keras_floatx())
         boxes = keras.backend.constant(boxes)
 
         classification = np.array([[
             [0, 0.9],  # this will be suppressed
             [0, 1],
-        ]], dtype=keras.backend.floatx())
+        ]], dtype=keras_floatx())
         classification = keras.backend.constant(classification)
 
         # compute output
@@ -45,13 +46,13 @@ class TestFilterDetections(object):
         actual_labels = keras.backend.eval(actual_labels)
 
         # define expected output
-        expected_boxes = -1 * np.ones((1, 300, 4), dtype=keras.backend.floatx())
+        expected_boxes = -1 * np.ones((1, 300, 4), dtype=keras_floatx())
         expected_boxes[0, 0, :] = [0, 0, 10, 10]
 
-        expected_scores = -1 * np.ones((1, 300), dtype=keras.backend.floatx())
+        expected_scores = -1 * np.ones((1, 300), dtype=keras_floatx())
         expected_scores[0, 0] = 1
 
-        expected_labels = -1 * np.ones((1, 300), dtype=keras.backend.floatx())
+        expected_labels = -1 * np.ones((1, 300), dtype=keras_floatx())
         expected_labels[0, 0] = 1
 
         # assert actual and expected are equal
@@ -67,24 +68,24 @@ class TestFilterDetections(object):
         boxes = np.array([[
             [0, 0, 10, 10],
             [0, 0, 10, 10],  # this will be suppressed
-        ]], dtype=keras.backend.floatx())
+        ]], dtype=keras_floatx())
         boxes = keras.backend.constant(boxes)
 
         classification = np.array([[
             [0, 0.9],  # this will be suppressed
             [0, 1],
-        ]], dtype=keras.backend.floatx())
+        ]], dtype=keras_floatx())
         classification = keras.backend.constant(classification)
 
         other = []
         other.append(np.array([[
             [0, 1234],  # this will be suppressed
             [0, 5678],
-        ]], dtype=keras.backend.floatx()))
+        ]], dtype=keras_floatx()))
         other.append(np.array([[
             5678,  # this will be suppressed
             1234,
-        ]], dtype=keras.backend.floatx()))
+        ]], dtype=keras_floatx()))
         other = [keras.backend.constant(o) for o in other]
 
         # compute output
@@ -95,19 +96,19 @@ class TestFilterDetections(object):
         actual_other  = [keras.backend.eval(a) for a in actual[3:]]
 
         # define expected output
-        expected_boxes = -1 * np.ones((1, 300, 4), dtype=keras.backend.floatx())
+        expected_boxes = -1 * np.ones((1, 300, 4), dtype=keras_floatx())
         expected_boxes[0, 0, :] = [0, 0, 10, 10]
 
-        expected_scores = -1 * np.ones((1, 300), dtype=keras.backend.floatx())
+        expected_scores = -1 * np.ones((1, 300), dtype=keras_floatx())
         expected_scores[0, 0] = 1
 
-        expected_labels = -1 * np.ones((1, 300), dtype=keras.backend.floatx())
+        expected_labels = -1 * np.ones((1, 300), dtype=keras_floatx())
         expected_labels[0, 0] = 1
 
         expected_other = []
-        expected_other.append(-1 * np.ones((1, 300, 2), dtype=keras.backend.floatx()))
+        expected_other.append(-1 * np.ones((1, 300, 2), dtype=keras_floatx()))
         expected_other[-1][0, 0, :] = [0, 5678]
-        expected_other.append(-1 * np.ones((1, 300), dtype=keras.backend.floatx()))
+        expected_other.append(-1 * np.ones((1, 300), dtype=keras_floatx()))
         expected_other[-1][0, 0] = 1234
 
         # assert actual and expected are equal
@@ -132,7 +133,7 @@ class TestFilterDetections(object):
                 [100, 100, 150, 150],
                 [100, 100, 150, 150],  # this will be suppressed
             ],
-        ], dtype=keras.backend.floatx())
+        ], dtype=keras_floatx())
         boxes = keras.backend.constant(boxes)
 
         classification = np.array([
@@ -144,7 +145,7 @@ class TestFilterDetections(object):
                 [1,   0],
                 [0.9, 0],  # this will be suppressed
             ],
-        ], dtype=keras.backend.floatx())
+        ], dtype=keras_floatx())
         classification = keras.backend.constant(classification)
 
         # compute output
@@ -154,15 +155,15 @@ class TestFilterDetections(object):
         actual_labels = keras.backend.eval(actual_labels)
 
         # define expected output
-        expected_boxes = -1 * np.ones((2, 300, 4), dtype=keras.backend.floatx())
+        expected_boxes = -1 * np.ones((2, 300, 4), dtype=keras_floatx())
         expected_boxes[0, 0, :] = [0, 0, 10, 10]
         expected_boxes[1, 0, :] = [100, 100, 150, 150]
 
-        expected_scores = -1 * np.ones((2, 300), dtype=keras.backend.floatx())
+        expected_scores = -1 * np.ones((2, 300), dtype=keras_floatx())
         expected_scores[0, 0] = 1
         expected_scores[1, 0] = 1
 
-        expected_labels = -1 * np.ones((2, 300), dtype=keras.backend.floatx())
+        expected_labels = -1 * np.ones((2, 300), dtype=keras_floatx())
         expected_labels[0, 0] = 1
         expected_labels[1, 0] = 0
 
