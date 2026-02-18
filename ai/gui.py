@@ -1,4 +1,5 @@
 import os
+import signal
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
@@ -24,6 +25,10 @@ class gui:
         self.window = window
         self.window.title(window_title)
         self.window.resizable(False, False)
+        self.running = True
+        self.window.protocol("WM_DELETE_WINDOW", self.shutdown)
+        self.window.bind("<Escape>", self.shutdown)
+        signal.signal(signal.SIGINT, self._handle_sigint)
 
         self.game_window_size = {"top": 0, "left": 0, "width": 720, "height": 480}
         base_dir = os.path.dirname(__file__)
@@ -220,7 +225,18 @@ class gui:
         self.update()
         self.window.mainloop()
     
+    def _handle_sigint(self, signum, frame):
+        self.shutdown()
+
+    def shutdown(self, event=None):
+        if not self.running:
+            return
+        self.running = False
+        self.window.after(0, self.window.destroy)
+
     def update(self):
+        if not self.running:
+            return
         if not (self.is_paused == True and self.initial == False):
             frame, map_grid = self.pa.run_step()
             #ret, frame = self.video.read()
@@ -284,7 +300,8 @@ class gui:
                 self.mapper_listbox.insert("", 0, text=new_item.text)
 
         self.initial = False
-        self.window.after(1, self.update)
+        if self.running:
+            self.window.after(1, self.update)
     
     def pause_ai(self):
         self.is_paused = not self.is_paused
