@@ -1,3 +1,4 @@
+import os
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
@@ -25,7 +26,10 @@ class gui:
         self.window.resizable(False, False)
 
         self.game_window_size = {"top": 0, "left": 0, "width": 720, "height": 480}
-        self.model_path = "../object_detection/keras-retinanet/inference_graphs/map_detector.h5"# Model to be used for detection
+        base_dir = os.path.dirname(__file__)
+        self.model_path = os.path.abspath(os.path.join(
+            base_dir, "..", "object_detection", "keras-retinanet", "inference_graphs", "map_detector.h5"
+        ))  # Model to be used for detection
         self.labels_to_names = {0: "pokecen", 1: "pokemart", 2: "npc", 3: "house", 4: "gym", 5: "exit", 6: "wall", 7:"grass"} # Labels to draw
         self.attacks = ["Scratch", "Growl", "Focus Energy", "Ember"]
         self.pa = poke_ai(self.model_path, self.labels_to_names, self.game_window_size)

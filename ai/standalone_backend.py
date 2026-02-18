@@ -1,3 +1,5 @@
+import os
+
 from tensorflow import keras
 
 # Imports for DQNN
@@ -45,7 +47,11 @@ class poke_ai:
         self.bat_ai = battle_ai(self.battle_model)
 
         # Finding game window using included .png
-        self.game_window_size["left"], self.game_window_size["top"], temp1, temp2 = pag.locateOnScreen("find_game_window_windows.png", confidence=0.8)
+        base_dir = os.path.dirname(__file__)
+        window_image = os.path.join(base_dir, "find_game_window_windows.png")
+        self.game_window_size["left"], self.game_window_size["top"], temp1, temp2 = pag.locateOnScreen(
+            window_image, confidence=0.8
+        )
         # Adding a 76 pixel offset to the y coordinate since the function above returns the x,y
         # coordinates of the menu bar - we want the coords of the gameplay below this bar
         # Change this offset to 20 if you are running on ubuntu and are using find_game_window_ubuntu.png

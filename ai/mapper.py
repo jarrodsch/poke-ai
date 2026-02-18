@@ -1,6 +1,6 @@
 import numpy as np
 import math
-from path_finder import path_finder
+from .path_finder import path_finder
 
 # Think of this object as something akin to SLAM. This will basically simultaenously
 # localize the player character and map out its surroundings. This live map will be
