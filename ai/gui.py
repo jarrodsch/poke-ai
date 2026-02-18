@@ -180,6 +180,15 @@ class gui:
         self.rnd_var_label = tk.Label(self.window, textvariable=self.randomness_var, font=("Helvetica", 10))
         self.rnd_var_label.grid(row=14, column=1, padx=5, pady=1, sticky="w")
 
+        ### DETECTION STATUS ###
+        self.det_label = tk.Label(self.window, text="Detector:", font=("Helvetica", 10))
+        self.det_label.grid(row=15, column=0, padx=5, pady=1, sticky="w")
+        detector_state = "Stub mode (no model)" if self.pa.detection_model is None else "Active"
+        self.det_var = tk.StringVar()
+        self.det_var.set(detector_state)
+        self.det_var_label = tk.Label(self.window, textvariable=self.det_var, font=("Helvetica", 10))
+        self.det_var_label.grid(row=15, column=1, padx=5, pady=1, sticky="w")
+
         ### MAPPER STATUS ###
         self.ms_label = tk.Label(self.window, text="Mapper Status", font=("Helvetica", 12))
         self.ms_label.grid(row=8, column=6, columnspan=6, padx=5, pady=5)

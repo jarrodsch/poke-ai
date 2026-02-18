@@ -37,7 +37,11 @@ class poke_ai:
         self.labels_to_names = labels_to_names
 
         configure_tensorflow()
-        self.detection_model = models.load_model(self.model_path, backbone_name="resnet50")
+        self.detection_model = None
+        if os.path.exists(self.model_path):
+            self.detection_model = models.load_model(self.model_path, backbone_name="resnet50")
+        else:
+            print(f"[poke-ai] WARNING: detection model not found at {self.model_path}. Running in stub mode.")
 
         # Load battle AI model here as well.
         self.battle_model = Sequential()
@@ -127,6 +131,11 @@ class poke_ai:
     # Runs inference on a single input frame and returns detected bounding boxes
     def run_detection(self, frame):
         raw_frame = frame.copy()
+        if self.detection_model is None:
+            self.has_detections = False
+            self.predictions_for_map = []
+            self._maybe_capture(raw_frame, None, None, None)
+            return frame, False
         # Process image and run inference
         image = preprocess_image(frame) # Retinanet specific preprocessing
         image, scale = resize_image(image, min_side = 400) # This model was trained with 400p images
@@ -175,17 +184,19 @@ class poke_ai:
         cv2.imwrite(str(frame_path), frame)
 
         preds = []
-        for box, score, label in zip(boxes[0], scores[0], labels[0]):
-            preds.append({
-                "label": int(label),
-                "score": float(score),
-                "box": [float(x) for x in box],
-            })
+        if boxes is not None and scores is not None and labels is not None:
+            for box, score, label in zip(boxes[0], scores[0], labels[0]):
+                preds.append({
+                    "label": int(label),
+                    "score": float(score),
+                    "box": [float(x) for x in box],
+                })
 
         payload = {
             "frame": frame_path.name,
             "labels_to_names": self.labels_to_names,
             "predictions": preds,
+            "stub_mode": self.detection_model is None,
         }
         with open(preds_path, "w", encoding="utf-8") as handle:
             json.dump(payload, handle, indent=2)
