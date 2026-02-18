@@ -14,6 +14,12 @@ by Tsung-Yi Lin, Priya Goyal, Ross Girshick, Kaiming He and Piotr Dollár.
 4) Alternatively, you can run the code directly from the cloned  repository, however you need to run `python setup.py build_ext --inplace` to compile Cython code first.
 5) Optionally, install `pycocotools` if you want to train / test on the MS COCO dataset by running `pip install --user git+https://github.com/cocodataset/cocoapi.git#subdirectory=PythonAPI`.
 
+## TensorFlow / Keras compatibility
+This fork is tested with modern TensorFlow + Keras (tf.keras / Keras 3). A few compatibility notes:
+- TensorBoard summary writers changed in TF2/Keras 3; logging now falls back to `tf.summary` when legacy `writer.add_summary` is unavailable.
+- Keras `floatx()` can return a `tf.DType` in newer stacks. NumPy consumers should use a normalized dtype (for example `float32`) to avoid `TypeError`.
+- Some optional dependencies (like `pycocotools`) are only required for COCO training/eval; tests will skip COCO paths when it isn't installed.
+
 ## Testing
 An example of testing the network can be seen in [this Notebook](https://github.com/delftrobotics/keras-retinanet/blob/master/examples/ResNet50RetinaNet.ipynb).
 In general, inference of the network works as follows:
