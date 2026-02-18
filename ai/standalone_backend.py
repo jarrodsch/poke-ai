@@ -1,4 +1,6 @@
+import json
 import os
+from pathlib import Path
 
 from tensorflow import keras
 
@@ -89,6 +91,16 @@ class poke_ai:
         self.mapper_history_list = []
         self.history_output = None
 
+        # Active learning capture (frames + predictions)
+        self.capture_enabled = True
+        self.capture_interval = 30  # capture every N calls to run_detection
+        self.capture_counter = 0
+        self.capture_dir = Path(__file__).resolve().parent.parent / "data" / "active_learning"
+        self.capture_frames_dir = self.capture_dir / "frames"
+        self.capture_preds_dir = self.capture_dir / "preds"
+        self.capture_frames_dir.mkdir(parents=True, exist_ok=True)
+        self.capture_preds_dir.mkdir(parents=True, exist_ok=True)
+
     # Dummy function, does nothing
     def nothing(self, x):
         pass
@@ -114,6 +126,7 @@ class poke_ai:
 
     # Runs inference on a single input frame and returns detected bounding boxes
     def run_detection(self, frame):
+        raw_frame = frame.copy()
         # Process image and run inference
         image = preprocess_image(frame) # Retinanet specific preprocessing
         image, scale = resize_image(image, min_side = 400) # This model was trained with 400p images
@@ -144,7 +157,38 @@ class poke_ai:
             # Appending to output array
             self.predictions_for_map.append((label, box))
 
+        self._maybe_capture(raw_frame, boxes, scores, labels)
         return frame, False
+
+    def _maybe_capture(self, frame, boxes, scores, labels):
+        if not self.capture_enabled:
+            return
+        self.capture_counter += 1
+        if self.capture_counter % self.capture_interval != 0:
+            return
+
+        timestamp = time.strftime("%Y%m%d_%H%M%S")
+        filename = f"frame_{timestamp}_{self.capture_counter:06d}"
+        frame_path = self.capture_frames_dir / f"{filename}.png"
+        preds_path = self.capture_preds_dir / f"{filename}.json"
+
+        cv2.imwrite(str(frame_path), frame)
+
+        preds = []
+        for box, score, label in zip(boxes[0], scores[0], labels[0]):
+            preds.append({
+                "label": int(label),
+                "score": float(score),
+                "box": [float(x) for x in box],
+            })
+
+        payload = {
+            "frame": frame_path.name,
+            "labels_to_names": self.labels_to_names,
+            "predictions": preds,
+        }
+        with open(preds_path, "w", encoding="utf-8") as handle:
+            json.dump(payload, handle, indent=2)
 
     def run_step(self):
         temp_bool = None
