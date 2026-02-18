@@ -55,13 +55,19 @@ class poke_ai:
         # Finding game window using included .png
         base_dir = os.path.dirname(__file__)
         window_image = os.path.join(base_dir, "find_game_window_windows.png")
-        self.game_window_size["left"], self.game_window_size["top"], temp1, temp2 = pag.locateOnScreen(
-            window_image, confidence=0.8
-        )
-        # Adding a 76 pixel offset to the y coordinate since the function above returns the x,y
-        # coordinates of the menu bar - we want the coords of the gameplay below this bar
-        # Change this offset to 20 if you are running on ubuntu and are using find_game_window_ubuntu.png
-        self.game_window_size["top"] += 76
+        try:
+            self.game_window_size["left"], self.game_window_size["top"], temp1, temp2 = pag.locateOnScreen(
+                window_image, confidence=0.8
+            )
+            # Adding a 76 pixel offset to the y coordinate since the function above returns the x,y
+            # coordinates of the menu bar - we want the coords of the gameplay below this bar
+            # Change this offset to 20 if you are running on ubuntu and are using find_game_window_ubuntu.png
+            self.game_window_size["top"] += 76
+        except Exception:
+            print(
+                "[poke-ai] WARNING: could not locate emulator window from template image. "
+                "Using configured game_window_size coordinates as-is."
+            )
 
         # Initialise screen capturer
         self.sct = mss()
