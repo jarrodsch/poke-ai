@@ -72,10 +72,19 @@ class CocoEval(keras.callbacks.Callback):
         writer = _get_tensorboard_writer(self.tensorboard)
         if coco_eval_stats is not None and writer is not None:
             import tensorflow as tf
-            summary = tf.compat.v1.Summary()
-            for index, result in enumerate(coco_eval_stats):
-                summary_value = summary.value.add()
-                summary_value.simple_value = result
-                summary_value.tag = '{}. {}'.format(index + 1, coco_tag[index])
-                writer.add_summary(summary, epoch)
-                logs[coco_tag[index]] = result
+            if hasattr(writer, "add_summary"):
+                summary = tf.compat.v1.Summary()
+                for index, result in enumerate(coco_eval_stats):
+                    summary_value = summary.value.add()
+                    summary_value.simple_value = result
+                    summary_value.tag = '{}. {}'.format(index + 1, coco_tag[index])
+                    writer.add_summary(summary, epoch)
+                    logs[coco_tag[index]] = result
+            else:
+                with writer.as_default():
+                    for index, result in enumerate(coco_eval_stats):
+                        tag = '{}. {}'.format(index + 1, coco_tag[index])
+                        tf.summary.scalar(tag, result, step=epoch)
+                        logs[coco_tag[index]] = result
+                if hasattr(writer, "flush"):
+                    writer.flush()

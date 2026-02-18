@@ -104,11 +104,17 @@ class Evaluate(keras.callbacks.Callback):
         writer = _get_tensorboard_writer(self.tensorboard)
         if writer is not None:
             import tensorflow as tf
-            summary = tf.compat.v1.Summary()
-            summary_value = summary.value.add()
-            summary_value.simple_value = self.mean_ap
-            summary_value.tag = "mAP"
-            writer.add_summary(summary, epoch)
+            if hasattr(writer, "add_summary"):
+                summary = tf.compat.v1.Summary()
+                summary_value = summary.value.add()
+                summary_value.simple_value = self.mean_ap
+                summary_value.tag = "mAP"
+                writer.add_summary(summary, epoch)
+            else:
+                with writer.as_default():
+                    tf.summary.scalar("mAP", self.mean_ap, step=epoch)
+                if hasattr(writer, "flush"):
+                    writer.flush()
 
         logs['mAP'] = self.mean_ap
 
