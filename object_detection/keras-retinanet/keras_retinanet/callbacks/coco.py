@@ -18,6 +18,24 @@ from tensorflow import keras
 from ..utils.coco_eval import evaluate_coco
 
 
+def _get_tensorboard_writer(tensorboard):
+    if tensorboard is None:
+        return None
+    writer = getattr(tensorboard, "writer", None)
+    if writer is not None:
+        return writer
+    writers = getattr(tensorboard, "_writers", None)
+    if isinstance(writers, dict) and writers:
+        return writers.get("train") or next(iter(writers.values()))
+    get_writer = getattr(tensorboard, "_get_writer", None)
+    if callable(get_writer):
+        try:
+            return get_writer("train")
+        except Exception:
+            return None
+    return None
+
+
 class CocoEval(keras.callbacks.Callback):
     """ Performs COCO evaluation on each epoch.
     """
@@ -51,12 +69,13 @@ class CocoEval(keras.callbacks.Callback):
                     'AR @[ IoU=0.50:0.95 | area=medium | maxDets=100 ]',
                     'AR @[ IoU=0.50:0.95 | area= large | maxDets=100 ]']
         coco_eval_stats = evaluate_coco(self.generator, self.model, self.threshold)
-        if coco_eval_stats is not None and self.tensorboard is not None and self.tensorboard.writer is not None:
+        writer = _get_tensorboard_writer(self.tensorboard)
+        if coco_eval_stats is not None and writer is not None:
             import tensorflow as tf
             summary = tf.compat.v1.Summary()
             for index, result in enumerate(coco_eval_stats):
                 summary_value = summary.value.add()
                 summary_value.simple_value = result
                 summary_value.tag = '{}. {}'.format(index + 1, coco_tag[index])
-                self.tensorboard.writer.add_summary(summary, epoch)
+                writer.add_summary(summary, epoch)
                 logs[coco_tag[index]] = result
